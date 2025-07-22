@@ -1,6 +1,9 @@
 import asyncHandler from "express-async-handler";
 import validator from "validator";
 import UserModel from "../models/userModel.js";
+import generateToken from "../utils/generateToken.js";
+
+// user register
 const registerUser = asyncHandler(async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -76,6 +79,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
+// user login
 const loginUser = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -113,6 +117,7 @@ const loginUser = asyncHandler(async (req, res) => {
         role: user.role,
         address: user.address || [],
       },
+      token: generateToken(user?._id),
     });
   } catch (error) {
     console.log("user login error:", error);
@@ -123,4 +128,36 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, loginUser };
+// getUser
+const getUser = asyncHandler(async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.body._id);
+
+    if (user) {
+      return res.json({
+        success: true,
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          avatar: user.avatar,
+          role: user.role,
+          address: user.address || [],
+        },
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: "user not found with this id",
+      });
+    }
+  } catch (error) {
+    console.log("get user error:", error);
+    return res.json({
+      success: false,
+      message: error?.message,
+    });
+  }
+});
+
+export { registerUser, loginUser, getUser };
