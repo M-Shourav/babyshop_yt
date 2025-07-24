@@ -160,4 +160,19 @@ const getUser = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, loginUser, getUser };
+const logoutUser = asyncHandler(async (req, res) => {
+  try {
+    res.send({
+      success: true,
+      message: "Logout successfully",
+    });
+  } catch (error) {
+    console.log("User logout error:", error);
+    return res.json({
+      success: false,
+      message: error?.message,
+    });
+  }
+});
+
+export { registerUser, loginUser, logoutUser, getUser };
