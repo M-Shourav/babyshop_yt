@@ -6,7 +6,10 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     avatar: {
-      type: String,
+      type: {
+        url: String,
+        public_id: String,
+      },
       default:
         "https://res.cloudinary.com/dzblvh4ui/image/upload/v1753539125/images_pzrqga.jpg",
     },

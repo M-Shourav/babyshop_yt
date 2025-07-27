@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import validator from "validator";
 import userModel from "../models/userModels.js";
 import GenerateToken from "../utils/GenerateToken.js";
+import cloudinary from "../utils/cloudinary.js";
 const registerUser = asyncHandler(async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -41,11 +42,20 @@ const registerUser = asyncHandler(async (req, res) => {
       });
     }
 
+    // image upload cloudinary
+    const uploadCloudinary = await cloudinary.uploader.upload(req.file.path, {
+      resource_type: "auto",
+      folder: "avatar",
+    });
     const user = await userModel.create({
       name,
       email,
       password,
       role,
+      avatar: {
+        url: uploadCloudinary.secure_url,
+        public_id: uploadCloudinary.public_id,
+      },
       address: [],
     });
     if (user) {
@@ -210,6 +220,7 @@ const updateUser = asyncHandler(async (req, res) => {
     });
   }
 });
+
 const GetUserList = asyncHandler(async (req, res) => {
   try {
     const total = await userModel.countDocuments({});
@@ -228,6 +239,33 @@ const GetUserList = asyncHandler(async (req, res) => {
   }
 });
 
+const singleProfile = asyncHandler(async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "user not found",
+      });
+    }
+    return res.json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+      },
+    });
+  } catch (error) {
+    console.error("single profile error:", error);
+    return res.json({
+      success: false,
+      message: error?.message,
+    });
+  }
+});
+
 export {
   registerUser,
   loginUser,
@@ -235,4 +273,5 @@ export {
   deleteUser,
   updateUser,
   GetUserList,
+  singleProfile,
 };
