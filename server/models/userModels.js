@@ -5,12 +5,17 @@ const userSchema = new mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    avatar: { type: String },
+    avatar: {
+      type: String,
+      default:
+        "https://res.cloudinary.com/dzblvh4ui/image/upload/v1753539125/images_pzrqga.jpg",
+    },
     role: {
       type: String,
       enum: ["user", "admin", "deliveryman"],
       default: "user",
     },
+    address: [],
     cart: [],
     wishList: [],
   },
