@@ -27,7 +27,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const res = await axios.post(
-        `${serverUrl}/api/user/login`,
+        `${serverUrl}/api/auth/login`,
         {
           email,
           password,

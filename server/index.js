@@ -1,18 +1,15 @@
 import express from "express";
+import connectDB from "./config/connectMongoDB.js";
 import dotenv from "dotenv";
 import cors from "cors";
-import connectDB from "./config/connectMongoDB.js";
-import userRouter from "./routes/userRoutes.js";
-
+import router from "./routes/userRoutes.js";
+import cookieParser from "cookie-parser";
 const app = express();
-dotenv.config(); //config dotenv
-
+dotenv.config();
 const port = process.env.PORT || 8000;
 
-connectDB(); //mongodb connect
-
+connectDB();
 const whiteList = [process.env.ADMIN_URL, process.env.CLIENT_URL];
-
 app.use(
   cors({
     origin: whiteList,
@@ -21,14 +18,17 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.use(express.json()); //json convert
 
-app.use("/api/user", userRouter);
+app.use(express.json());
+app.use(cookieParser());
+
+app.use("/api/auth", router);
 
 app.get("/", (req, res) => {
-  res.send("Hello style-mart");
+  res.send("Hello Style-Mert server");
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on port:${port}`);
+  console.log(`admin server running on port:${process.env.ADMIN_URL}`);
+  console.log(`server is running on port: ${port}`);
 });

@@ -1,8 +1,9 @@
 import asyncHandler from "express-async-handler";
 import validator from "validator";
 import userModel from "../models/userModels.js";
-import GenerateToken from "../utils/GenerateToken.js";
 import cloudinary from "../utils/cloudinary.js";
+import generateToken from "../utils/GenerateToken.js";
+import jwt from "jsonwebtoken";
 const registerUser = asyncHandler(async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -98,14 +99,8 @@ const loginUser = asyncHandler(async (req, res) => {
     }
     const isMatch = await user.matchPassword(password);
 
-    if (!isMatch) {
-      return res.json({
-        success: false,
-        message: "Password not match, please try current password",
-      });
-    }
-    if (user && isMatch) {
-      const token = GenerateToken(user?._id);
+    if (isMatch) {
+      const token = generateToken(user._id);
       res.cookie("token", token, {
         httpOnly: true,
         sameSite: "lax",
@@ -119,7 +114,7 @@ const loginUser = asyncHandler(async (req, res) => {
     } else {
       return res.json({
         success: false,
-        message: "user loggedIn failed try, again!",
+        message: "Password not match, please try current password",
       });
     }
   } catch (error) {
@@ -241,21 +236,12 @@ const GetUserList = asyncHandler(async (req, res) => {
 
 const singleProfile = asyncHandler(async (req, res) => {
   try {
-    const user = req.user;
-    if (!user) {
-      return res.json({
-        success: false,
-        message: "user not found",
-      });
-    }
+    const token = req.cookies?.token;
+    const decode = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await userModel.findOne(decode._id).select("-password");
     return res.json({
       success: true,
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        avatar: user.avatar,
-      },
+      user,
     });
   } catch (error) {
     console.error("single profile error:", error);
