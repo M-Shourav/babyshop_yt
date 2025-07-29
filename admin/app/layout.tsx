@@ -44,9 +44,7 @@ export default async function RootLayout({
             </div>
           </div>
         ) : (
-          <main className="min-h-screen w-full flex items-center justify-center">
-            {children}
-          </main>
+          <main>{children}</main>
         )}
         <Toaster
           position="bottom-right"

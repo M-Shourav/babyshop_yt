@@ -32,7 +32,7 @@ const Sidebar = () => {
   const handleLogout = async () => {
     try {
       const res = await axios.post(
-        `${serverUrl}/api/user/logout`,
+        `${serverUrl}/api/auth/logout`,
         {},
         { withCredentials: true }
       );
