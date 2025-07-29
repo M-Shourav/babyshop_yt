@@ -10,17 +10,28 @@ const userSchema = new mongoose.Schema(
         url: String,
         public_id: String,
       },
-      default:
-        "https://res.cloudinary.com/dzblvh4ui/image/upload/v1753539125/images_pzrqga.jpg",
+      default: {
+        url: "",
+        public_id: "",
+      },
     },
     role: {
       type: String,
       enum: ["user", "admin", "deliveryman"],
       default: "user",
     },
-    address: [],
-    cart: [],
-    wishList: [],
+    address: {
+      type: Array,
+      default: [],
+    },
+    cart: {
+      type: Array,
+      default: [],
+    },
+    wishList: {
+      type: Array,
+      default: [],
+    },
   },
   {
     timestamps: true,

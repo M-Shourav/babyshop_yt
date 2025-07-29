@@ -7,83 +7,59 @@ import jwt from "jsonwebtoken";
 const registerUser = asyncHandler(async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
-    if (!name) {
+
+    // Check if user already exists
+    const existingUser = await userModel.findOne({ email });
+    if (existingUser) {
       return res.json({
         success: false,
-        message: "Name is required",
-      });
-    }
-    if (!email) {
-      return res.json({
-        success: false,
-        message: "Email is required!",
-      });
-    }
-    if (!password) {
-      return res.json({
-        success: false,
-        message: "Password is required!",
+        message: "Email already taken, try a different email",
       });
     }
 
-    // check valid email
-    if (!validator.isEmail(email)) {
-      return res.json({
-        success: false,
-        message: "Invalid email address, try again!",
+    // Upload avatar if provided
+    let avatar = {
+      url: "https://res.cloudinary.com/drswdtncv/image/upload/v1753807270/images_wuqnyi.jpg", // default
+      public_id: "",
+    };
+    if (req.file) {
+      const file = await cloudinary.uploader.upload(req.file.path, {
+        resource_type: "auto",
+        folder: "avatars",
       });
+
+      avatar = {
+        url: file.secure_url,
+        public_id: file.public_id,
+      };
     }
 
-    // check user
-    const ExistingUser = await userModel.findOne({ email });
-    if (ExistingUser) {
-      return res.json({
-        success: false,
-        message: "User already exists, try different email!",
-      });
-    }
-
-    // image upload cloudinary
-    const uploadCloudinary = await cloudinary.uploader.upload(req.file.path, {
-      resource_type: "auto",
-      folder: "avatar",
-    });
     const user = await userModel.create({
       name,
       email,
       password,
       role,
-      avatar: {
-        url: uploadCloudinary.secure_url,
-        public_id: uploadCloudinary.public_id,
-      },
       address: [],
+      avatar: avatar,
     });
-    if (user) {
-      return res.json({
-        success: true,
-        message: "User Register successfully",
-        user: {
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          password: user.password,
-          role: user.role,
-          avatar: user.avatar,
-          address: user.address,
-        },
-      });
-    } else {
-      return res.json({
-        success: false,
-        message: "User Register Failed",
-      });
-    }
+
+    return res.json({
+      success: true,
+      message: "User registered successfully",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+        address: user.address,
+      },
+    });
   } catch (error) {
-    console.error("Register error", error);
+    console.log("Register Error:", error);
     return res.json({
       success: false,
-      message: error?.message,
+      message: error.message || "Internal Server Error",
     });
   }
 });
@@ -94,7 +70,7 @@ const loginUser = asyncHandler(async (req, res) => {
     if (!user) {
       return res.json({
         success: false,
-        message: "Email doesn't exists, try current email address",
+        message: "user doesn't exists!",
       });
     }
     const isMatch = await user.matchPassword(password);
@@ -114,14 +90,14 @@ const loginUser = asyncHandler(async (req, res) => {
     } else {
       return res.json({
         success: false,
-        message: "Password not match, please try current password",
+        message: "Invalid credential try again!",
       });
     }
   } catch (error) {
-    console.error("User login error:", error);
+    console.log("user login error:", error);
     return res.json({
       success: false,
-      message: "Failed loggedIn,try again",
+      message: error?.message,
     });
   }
 });
@@ -138,7 +114,7 @@ const logoutUser = asyncHandler(async (req, res) => {
       message: "user logout successfully",
     });
   } catch (error) {
-    console.error("logout error:", error);
+    console.log("logout error:", error);
     return res.json({
       success: false,
       message: error?.message,
@@ -160,7 +136,7 @@ const deleteUser = asyncHandler(async (req, res) => {
       message: "user deleted successfully",
     });
   } catch (error) {
-    console.error("user removed error:", error);
+    console.log("user removed error:", error);
     return res.json({
       success: false,
       message: error?.message,
@@ -208,7 +184,7 @@ const updateUser = asyncHandler(async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("user update error:", error);
+    console.log("user update error:", error);
     return res.json({
       success: false,
       message: error?.message,
@@ -226,7 +202,7 @@ const GetUserList = asyncHandler(async (req, res) => {
       user,
     });
   } catch (error) {
-    console.error("Get all user error:", error);
+    console.log("Get all user error:", error);
     return res.json({
       success: false,
       message: error?.message,
@@ -244,7 +220,7 @@ const singleProfile = asyncHandler(async (req, res) => {
       user,
     });
   } catch (error) {
-    console.error("single profile error:", error);
+    console.log("single profile error:", error);
     return res.json({
       success: false,
       message: error?.message,

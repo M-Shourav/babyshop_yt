@@ -5,7 +5,6 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -27,26 +26,59 @@ import { useState } from "react";
 import axios from "axios";
 import { serverUrl } from "@/config";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../select";
+import Image from "next/image";
+import { ImagePlus, X } from "lucide-react";
 
 const formSchema = z.object({
+  name: z.string().min(1, "name is required").max(100),
   email: z.string().min(1, "Email is required").email("Invalid email"),
   password: z
     .string()
     .min(1, "Password is required")
     .min(8, "Password must have than 8 characters"),
-  name: z.string().min(1, "name is required").max(100),
+  role: z.enum(["admin", "user", "delivery"]),
+  avatar: z.any().optional(),
 });
 
 const SignUpForm = () => {
   const [loading, setLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
       password: "",
+      role: "user",
+      avatar: null,
     },
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("avatar", file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    form.setValue("avatar", null);
+    setImagePreview(null);
+  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
@@ -56,9 +88,9 @@ const SignUpForm = () => {
       });
 
       const data = res.data;
-      if (data?.message) {
+      if (data?.success) {
         toast.success(data?.message);
-        window.location.href = "/login";
+        router.push("/login");
       } else {
         toast.error(data?.message);
       }
@@ -73,7 +105,7 @@ const SignUpForm = () => {
       initial={{ scale: 0.8 }}
       animate={{ scale: 1 }}
       transition={{ duration: 0.3 }}
-      className="w-full max-w-sm"
+      className="w-full max-w-md"
     >
       <Card className="w-full">
         <CardHeader>
@@ -92,13 +124,13 @@ const SignUpForm = () => {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel className="text-xs">Name</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
@@ -117,7 +149,7 @@ const SignUpForm = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-xs">Email</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
@@ -136,7 +168,7 @@ const SignUpForm = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-xs">Password</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
@@ -150,17 +182,48 @@ const SignUpForm = () => {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Role</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a role" />
+                        </SelectTrigger>
+                      </FormControl>
+
+                      <SelectContent className="text-xs">
+                        <SelectItem value="user" className=" cursor-pointer">
+                          User
+                        </SelectItem>
+                        <SelectItem value="admin" className=" cursor-pointer">
+                          Admin
+                        </SelectItem>
+                        <SelectItem
+                          value="delivery"
+                          className=" cursor-pointer"
+                        >
+                          Deliveryman
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <Button type="submit" className="w-full" disabled={loading}>
                 Sign Up
               </Button>
             </form>
           </Form>
         </CardContent>
-        <CardFooter>
-          <Button variant="secondary" className="w-full">
-            Login with Google
-          </Button>
-        </CardFooter>
       </Card>
     </motion.div>
   );
