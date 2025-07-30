@@ -1,13 +1,13 @@
 "use client";
 
 import { serverUrl } from "@/config";
-import { User } from "@/types/userType";
+import { UserType } from "@/types/userType";
 import axios from "axios";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 const Topbar = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
   useEffect(() => {
     const getSingleUser = async () => {
       try {
