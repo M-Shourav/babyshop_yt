@@ -1,5 +1,5 @@
 import React from "react";
-import { Card } from "../card";
+import { Card } from "../ui/card";
 
 const CategoryChart = () => {
   return <Card>CategoryChart</Card>;

@@ -1,5 +1,5 @@
-import AdminChart from "@/components/ui/commons/AdminChart";
-import CategoryChart from "@/components/ui/commons/CategoryChart";
+import AdminChart from "@/components/commons/AdminChart";
+import CategoryChart from "@/components/commons/CategoryChart";
 import React from "react";
 
 const Home = () => {

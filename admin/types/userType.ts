@@ -2,7 +2,7 @@ export interface UserType {
   _id: string;
   name: string;
   email: string;
-  role: [string];
+  role: string;
   avatar: {
     _id: string;
     url: string;

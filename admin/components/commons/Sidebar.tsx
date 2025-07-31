@@ -24,16 +24,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../popover";
+import toast from "react-hot-toast";
+import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
 import {
   Command,
+  CommandDialog,
   CommandGroup,
   CommandItem,
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from "../command";
-import toast from "react-hot-toast";
+} from "../ui/command";
 
 const NavItems = [
   {
