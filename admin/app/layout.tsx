@@ -34,11 +34,15 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {token ? (
-          <div className="flex">
-            <Sidebar />
-            <div className="flex-1 flex flex-col">
-              <Topbar />
-              <main className="p-4 bg-gray-50 min-h-[calc(100vh-56px)]">
+          <div className="flex h-screen overflow-hidden">
+            <div className="w-48 h-full shrink-0 hidden md:flex flex-col justify-between bg-gradient-to-t from-cyan-950 via-gray-900 to-slate-900 text-white">
+              <Sidebar />
+            </div>
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="h-[56px] shrink-0 border-b bg-white z-10">
+                <Topbar />
+              </div>
+              <main className="flex-1 overflow-y-auto p-4 bg-gray-50">
                 {children}
               </main>
             </div>
@@ -46,6 +50,7 @@ export default async function RootLayout({
         ) : (
           <main>{children}</main>
         )}
+
         <Toaster
           position="bottom-right"
           toastOptions={{

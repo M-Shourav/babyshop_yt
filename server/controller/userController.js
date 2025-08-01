@@ -130,6 +130,12 @@ const deleteUser = asyncHandler(async (req, res) => {
         message: "user not found or not matching with actual user.",
       });
     }
+
+    // delete image form cloudinary
+    if (user?.avatar.public_id) {
+      await cloudinary.uploader.destroy(user?.avatar.public_id);
+    }
+
     await userModel.findByIdAndDelete(user);
     return res.json({
       success: true,

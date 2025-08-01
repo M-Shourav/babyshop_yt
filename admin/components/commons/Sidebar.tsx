@@ -121,7 +121,7 @@ const Sidebar = () => {
     }
   };
   return (
-    <aside className="w-48 h-screen border-r hidden md:flex flex-col justify-between  bg-gradient-to-t from-cyan-950 via-gray-900 to-slate-900 text-white">
+    <>
       <div className="h-14 border-b w-full flex items-center justify-center bg-gradient-to-l from-cyan-500 via-slate-900 to-purple-900">
         <h2 className="text-xl font-semibold">StyleMert Admin</h2>
       </div>
@@ -237,7 +237,7 @@ const Sidebar = () => {
           </PopoverContent>
         </Popover>
       </div>
-    </aside>
+    </>
   );
 };
 
