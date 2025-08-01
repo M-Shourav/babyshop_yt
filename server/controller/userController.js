@@ -145,13 +145,28 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 const updateUser = asyncHandler(async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { name, email, role } = req.body;
     const user = await userModel.findById(req.params.id);
     if (!user) {
       return res.json({
         success: false,
         message: "user not found",
       });
+    }
+
+    if (req.file) {
+      if (user.avatar && user.avatar.public_id) {
+        await cloudinary.uploader.destroy(user.avatar.public_id);
+      }
+
+      const updateImage = await cloudinary.uploader.upload(req.file?.path, {
+        folder: "avatars",
+      });
+
+      user.avatar = {
+        url: updateImage?.secure_url,
+        public_id: updateImage.public_id,
+      };
     }
 
     if (name) user.name = name;
@@ -164,6 +179,7 @@ const updateUser = asyncHandler(async (req, res) => {
       }
       user.email = email;
     }
+    if (role) user.role = role;
 
     // update user
     const update = await user.save();
@@ -175,12 +191,8 @@ const updateUser = asyncHandler(async (req, res) => {
         _id: update._id,
         name: update.name,
         email: update.email,
-        password: update.password,
         role: update.role,
         avatar: update.avatar,
-        cart: update.cart,
-        address: update.address,
-        whitelist: update.whitelist,
       },
     });
   } catch (error) {

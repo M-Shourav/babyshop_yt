@@ -18,6 +18,6 @@ userRouter.post("/logout", logoutUser);
 userRouter.post("/delete/:id", deleteUser);
 userRouter.get("/profile", GetUserList);
 userRouter.get("/singleProfile", singleProfile);
-userRouter.put("/update/:id", updateUser);
+userRouter.put("/update/:id", upload.single("avatar"), updateUser);
 
 export default userRouter;
