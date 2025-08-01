@@ -18,7 +18,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../form";
+} from "../ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,9 +33,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../select";
-import Image from "next/image";
-import { ImagePlus, X } from "lucide-react";
+} from "../ui/select";
 
 const formSchema = z.object({
   name: z.string().min(1, "name is required").max(100),
