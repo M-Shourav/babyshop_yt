@@ -76,7 +76,7 @@ const NavItems = [
   },
 ];
 
-const Sidebar = () => {
+const MobileNavigation = () => {
   const [user, setUser] = useState<UserType | null>(null);
   const [open, setOpen] = useState(false);
   const pathName = usePathname();
@@ -119,10 +119,7 @@ const Sidebar = () => {
   };
   return (
     <>
-      <div className="h-14 border-b w-full flex items-center justify-center bg-gradient-to-l from-cyan-500 via-slate-900 to-purple-900">
-        <h2 className="text-xl font-semibold">StyleMert Admin</h2>
-      </div>
-      <div className="flex-1 p-2">
+      <div className="flex-1 px-4">
         <div className="flex flex-col gap-y-2">
           {NavItems?.map((item, index) => {
             const isActive = pathName === item?.href;
@@ -130,7 +127,7 @@ const Sidebar = () => {
               <Link
                 key={index}
                 href={item?.href}
-                className={`flex items-center gap-x-2 text-sm font-semibold rounded-md shadow-md py-2 px-2 ${
+                className={`flex items-center gap-x-2 text-sm font-semibold rounded-md shadow py-2 px-2 ${
                   isActive
                     ? "ring-1 ring-purple-600"
                     : "hover:ring-1 hover:ring-cyan-500"
@@ -143,7 +140,7 @@ const Sidebar = () => {
           })}
         </div>
       </div>
-      <div className="p-1">
+      <div className="p-4">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <div className="flex items-center gap-x-2 mb-4 p-2 hover:ring-1 hover:ring-cyan-400 rounded-md cursor-pointer">
@@ -159,15 +156,13 @@ const Sidebar = () => {
               <div className="w-full flex items-center justify-between">
                 <div className="flex flex-col items-start">
                   <h3 className="text-[10px] font-semibold">{user?.name}</h3>
-                  <p className="text-xs font-semibold text-gray-200">
-                    {user?.role}
-                  </p>
+                  <p className="text-xs font-semibold">{user?.role}</p>
                 </div>
                 <ChevronsLeftRight size={15} />
               </div>
             </div>
           </PopoverTrigger>
-          <PopoverContent className="mb-10" side="right" align="start">
+          <PopoverContent side="top" align="start">
             <Command>
               <CommandList>
                 <CommandGroup>
@@ -238,4 +233,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default MobileNavigation;

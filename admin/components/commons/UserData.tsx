@@ -1,8 +1,8 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import { serverUrl } from "@/config";
 import { UserType } from "@/types/userType";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
