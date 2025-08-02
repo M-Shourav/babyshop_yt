@@ -5,6 +5,7 @@ import cors from "cors";
 import router from "./routes/userRoutes.js";
 import cookieParser from "cookie-parser";
 import brandRouter from "./routes/brandsRoutes.js";
+import categoryRouter from "./routes/categoryRoutes.js";
 const app = express();
 dotenv.config();
 const port = process.env.PORT || 8000;
@@ -23,9 +24,9 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api/auth", router);
-app.use("/api/brand", brandRouter);
-// app.use("/api/category")
+app.use(process.env.USER, router);
+app.use(process.env.BRAND, brandRouter);
+app.use(process.env.CATEGORY, categoryRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello Style-Mert server");
