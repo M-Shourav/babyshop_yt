@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "../ui/table";
 import Image from "next/image";
-import { EllipsisVertical, X } from "lucide-react";
+import { EllipsisVertical, Funnel, ListFilter, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -47,14 +47,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Input } from "../ui/input";
 
 const UserData = () => {
   const [userData, setUserData] = useState<UserType[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(4);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const paginateData = userData?.slice(
+  const filteredData = userData.filter((user) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      user.name?.toLowerCase().includes(term) ||
+      user.email?.toLowerCase().includes(term) ||
+      user.role?.toLowerCase().includes(term)
+    );
+  });
+
+  const paginateData = filteredData?.slice(
     (currentPage - 1) * itemPerPage,
     currentPage * itemPerPage
   );
@@ -111,39 +122,55 @@ const UserData = () => {
           <CardContent>
             {/* user per-page filter */}
             <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1>filter data</h1>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium text-muted-foreground">
-                  users per page
-                </span>
-                <Select
-                  onValueChange={(value) => {
-                    setItemPerPage(Number(value));
+              <div className="flex flex-col md:flex-row gap-2">
+                <div className="flex items-center gap-1 border rounded-md p-1 w-[100px]">
+                  <ListFilter size={15} className="font-semibold" />
+                  <span className="text-sm font-semibold">Filter</span>
+                </div>
+                <Input
+                  type="text"
+                  placeholder="search name,email,role ..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1); //reset pagination
                   }}
-                >
-                  <SelectTrigger className="w-20 py-4 focus-visible:ring-1">
-                    <SelectValue placeholder={`${itemPerPage}`} />
-                  </SelectTrigger>
-                  <SelectContent className="min-w-[20px]">
-                    <SelectItem value="4" className=" cursor-pointer">
-                      4
-                    </SelectItem>
-                    <SelectItem value="10" className=" cursor-pointer">
-                      10
-                    </SelectItem>
-                    <SelectItem value="30" className=" cursor-pointer">
-                      30
-                    </SelectItem>
-                    <SelectItem value="50" className=" cursor-pointer">
-                      50
-                    </SelectItem>
-                    <SelectItem value="100" className=" cursor-pointer">
-                      100
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                  className=" focus-visible:ring-1"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex flex-col md:flex-row items-center gap-2">
+                  <p className="text-sm font-medium text-muted-foreground">
+                    users per page
+                  </p>
+                  <Select
+                    onValueChange={(value) => {
+                      setItemPerPage(Number(value));
+                      setCurrentPage(1); // reset to first page on change
+                    }}
+                  >
+                    <SelectTrigger className="w-20 py-4 focus-visible:ring-1">
+                      <SelectValue placeholder={`${itemPerPage}`} />
+                    </SelectTrigger>
+                    <SelectContent className="min-w-[20px]">
+                      <SelectItem value="4" className=" cursor-pointer">
+                        4
+                      </SelectItem>
+                      <SelectItem value="10" className=" cursor-pointer">
+                        10
+                      </SelectItem>
+                      <SelectItem value="30" className=" cursor-pointer">
+                        30
+                      </SelectItem>
+                      <SelectItem value="50" className=" cursor-pointer">
+                        50
+                      </SelectItem>
+                      <SelectItem value="100" className=" cursor-pointer">
+                        100
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
             <Table>
