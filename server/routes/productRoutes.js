@@ -7,6 +7,7 @@ import {
   updateProducts,
 } from "../controller/productController.js";
 import upload from "../middlewares/multer.js";
+import { adminOnly, protect } from "../middlewares/authMiddleware.js";
 
 const productRouter = Router();
 
