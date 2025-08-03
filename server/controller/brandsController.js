@@ -90,8 +90,8 @@ const updateBrand = asyncHandler(async (req, res) => {
 });
 const singleBrand = asyncHandler(async (req, res) => {
   try {
-    const brandSlug = await Brand.findOne({ slug: req.params.slug });
-    if (!brandSlug) {
+    const brand = await Brand.findOne({ slug: req.params.slug });
+    if (!brand) {
       return res.json({
         success: false,
         message: "brand not found",
@@ -100,7 +100,7 @@ const singleBrand = asyncHandler(async (req, res) => {
 
     return res.json({
       success: true,
-      brandSlug,
+      brand,
     });
   } catch (error) {
     console.log("single brands error:", error);
