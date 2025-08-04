@@ -22,14 +22,13 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { serverUrl } from "@/config";
 import axios from "axios";
-import { Loader2, Trash2 } from "lucide-react";
+import { ListFilter, Loader2, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import UpdateBrand from "./UpdateBrand";
@@ -47,13 +46,44 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const BrandData = () => {
   const [brand, setBrand] = useState<BrandsType[]>([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemPerPage, setItemPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const filterBrand = brand.filter((brand) => {
+    const sc = searchTerm.toLowerCase();
+    return brand.name?.toLowerCase().includes(sc);
+  });
+
+  const paginateBrand = filterBrand?.slice(
+    (currentPage - 1) * itemPerPage,
+    currentPage * itemPerPage
+  );
+
+  const totalPage = Math.ceil(brand.length / itemPerPage);
   const getBrand = async () => {
     try {
       const res = await axios.get(`${serverUrl}/api/brand/brands`, {
@@ -117,15 +147,56 @@ const BrandData = () => {
   useEffect(() => {
     getBrand();
   }, []);
-
-  console.log(name);
-  console.log(description);
-
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          <p>Brand Page</p>
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center gap-1 max-w-xs">
+            <div className="w-20 h-9 hidden md:inline-flex items-center justify-center gap-1 border rounded-sm">
+              <ListFilter size={15} className="font-semibold" />
+              <span className="text-sm font-semibold">Filter</span>
+            </div>
+            <Input
+              type="text"
+              placeholder="Filter Brand name..."
+              className=" placeholder:text-sm placeholder:font-normal focus-visible:ring-0 w-[150px]"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1); //reset pagination
+              }}
+            />
+          </div>
+          <div className="hidden md:inline-flex items-center gap-2 mr-20">
+            <p className="text-xs">Brand per page</p>
+            <Select
+              onValueChange={(value) => {
+                setItemPerPage(Number(value));
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={itemPerPage} />
+              </SelectTrigger>
+              <SelectContent className="min-w-[20px]">
+                <SelectItem value="10" className=" cursor-pointer">
+                  10
+                </SelectItem>
+                <SelectItem value="30" className=" cursor-pointer">
+                  30
+                </SelectItem>
+                <SelectItem value="50" className=" cursor-pointer">
+                  50
+                </SelectItem>
+                <SelectItem value="75" className=" cursor-pointer">
+                  75
+                </SelectItem>
+                <SelectItem value="100" className=" cursor-pointer">
+                  100
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </CardTitle>
         <CardAction>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -200,14 +271,16 @@ const BrandData = () => {
                 <TableHead className=" hidden md:table-cell">
                   Description
                 </TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead className="text-red-500">Action</TableHead>
                 <TableHead>Edit</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {brand?.map((item, index) => (
+              {paginateBrand?.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>
+                    {(currentPage - 1) * itemPerPage + index + 1}
+                  </TableCell>
                   <TableCell>{item?.name}</TableCell>
                   <TableCell className=" hidden md:table-cell">
                     {item?.description ? (
@@ -241,6 +314,7 @@ const BrandData = () => {
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
+                            className="hover:text-red-500"
                             onClick={() => handleDelete(item?._id)}
                           >
                             Delete
@@ -255,12 +329,60 @@ const BrandData = () => {
                 </TableRow>
               ))}
             </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={6}>Total:</TableCell>
-              </TableRow>
-            </TableFooter>
           </Table>
+        </div>
+        <div className="max-w-3xl flex items-center justify-between mt-10">
+          <p className="text-sm w-full flex items-center font-semibold text-muted-foreground">
+            Total Pages: <span className="ml-2 text-red-500"> {totalPage}</span>
+          </p>
+          {totalPage > 1 && (
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    className={`${
+                      currentPage === 1
+                        ? " pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }`}
+                  />
+                </PaginationItem>
+                {[...Array(totalPage)].map((_, i) => (
+                  <PaginationItem key={i}>
+                    <Button
+                      size="icon"
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`px-3 py-1 text-xs border border-gray-600 w-7 h-7 flex items-center justify-center ${
+                        currentPage === i + 1
+                          ? "bg-black text-white"
+                          : "bg-white text-black hover:text-white duration-200"
+                      } `}
+                    >
+                      {i + 1}
+                    </Button>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPage))
+                    }
+                    className={`${
+                      currentPage === totalPage
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }`}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
         </div>
       </CardContent>
     </Card>

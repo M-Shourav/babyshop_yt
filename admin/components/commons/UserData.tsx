@@ -186,7 +186,7 @@ const UserData = () => {
                 {paginateData?.map((item, index) => (
                   <TableRow key={item?._id}>
                     <TableCell className="hidden md:table-cell">
-                      {index + 1}
+                      {(currentPage - 1) * itemPerPage + index + 1}
                     </TableCell>
                     <TableCell>
                       {item?.avatar && (

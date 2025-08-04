@@ -118,6 +118,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    @apply overflow-hidden;
   }
   button {
     @apply cursor-pointer;
