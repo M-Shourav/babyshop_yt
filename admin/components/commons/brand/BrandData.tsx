@@ -57,7 +57,6 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -92,6 +91,8 @@ const BrandData = () => {
       const data = res?.data;
       if (data?.success) {
         setBrand(data?.brand);
+      } else {
+        toast.error(data?.message);
       }
     } catch (error) {
       console.log("Get brands error:", error);
@@ -113,6 +114,8 @@ const BrandData = () => {
         toast.success(data?.message);
         await getBrand();
         setIsOpen(false);
+        setName("");
+        setDescription("");
       }
     } catch (error) {
       console.log("Failed to create brand:", error);
@@ -136,6 +139,8 @@ const BrandData = () => {
         toast.success(data?.message);
         setBrand((prev) => prev.filter((b: BrandsType) => b._id !== id));
         await getBrand();
+      } else {
+        toast.error(data?.message);
       }
     } catch (error) {
       console.log("Failed delete brand:", error);
@@ -284,7 +289,7 @@ const BrandData = () => {
                   <TableCell>{item?.name}</TableCell>
                   <TableCell className=" hidden md:table-cell">
                     {item?.description ? (
-                      <>{item?.description}</>
+                      <>{item?.description.slice(0, 40)}...</>
                     ) : (
                       "No description"
                     )}

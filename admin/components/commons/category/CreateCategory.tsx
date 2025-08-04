@@ -1,7 +1,5 @@
 "use client";
-import React, { useState } from "react";
-import { serverUrl } from "@/config";
-import axios from "axios";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -12,30 +10,30 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Loader2, PencilLine } from "lucide-react";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { BrandsType } from "@/types/brandType";
+import { serverUrl } from "@/config";
+import axios from "axios";
+import { Loader2 } from "lucide-react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 interface Props {
-  item: BrandsType;
   onupdate: () => void;
 }
 
-const UpdateBrand = ({ item, onupdate }: Props) => {
-  const [name, setName] = useState(item?.name);
-  const [description, setDes] = useState(item?.description);
+const CreateCategory = ({ onupdate }: Props) => {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleUpdate = async () => {
+  const handleCategory = async () => {
     setLoading(true);
     try {
-      const res = await axios.put(
-        `${serverUrl}/api/brand/updateBrand/${item?._id}`,
+      const res = await axios.post(
+        `${serverUrl}/api/category/createCate`,
         {
           name,
           description,
@@ -44,53 +42,57 @@ const UpdateBrand = ({ item, onupdate }: Props) => {
           withCredentials: true,
         }
       );
-      const data = res?.data;
+      const data = res.data;
       if (data?.success) {
+        setIsOpen(false);
         toast.success(data?.message);
         onupdate();
-        setIsOpen(false);
+        setName("");
+        setDescription("");
       } else {
         toast.error(data?.message);
       }
     } catch (error) {
-      console.log("Failed to update brand:", error);
+      console.log("Category create failed:", error);
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <PencilLine />
-        </Button>
+        <Button variant="outline">Create category</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Brand data</DialogTitle>
-          <DialogDescription>
-            Make changes to Brand data here. Click save when you&apos;re done.
-          </DialogDescription>
+          <DialogTitle>Create product category</DialogTitle>
+          <DialogDescription>Create category</DialogDescription>
         </DialogHeader>
-
         <div className="grid gap-4">
           <div className=" space-y-2">
-            <Label className="text-xs font-semibold">Brand Name</Label>
+            <Label htmlFor="name">Category Name</Label>
             <Input
               type="text"
-              className="focus-visible:ring-1"
+              name="name"
+              placeholder="Enter category name"
+              className=" focus-visible:ring-0"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              autoComplete="off"
+              required
               disabled={loading}
             />
           </div>
           <div className=" space-y-2">
-            <Label className="text-xs font-semibold">Brand Description</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
-              className="h-24 focus-visible:ring-1 resize-none"
+              name="description"
+              id="description"
+              placeholder="Enter category name"
+              className="h-24 focus-visible:ring-0 resize-none"
               value={description}
-              onChange={(e) => setDes(e.target.value)}
+              onChange={(e) => setDescription(e.target.value)}
+              required
               disabled={loading}
             />
           </div>
@@ -99,14 +101,14 @@ const UpdateBrand = ({ item, onupdate }: Props) => {
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button type="button" onClick={handleUpdate} disabled={loading}>
+          <Button type="submit" onClick={handleCategory} disabled={loading}>
             {loading ? (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 ">
                 <Loader2 className="mt-1 animate-spin" />
-                <p>update...</p>
+                <p>Processing...</p>
               </div>
             ) : (
-              <p> Save changes</p>
+              <p>Create category</p>
             )}
           </Button>
         </DialogFooter>
@@ -115,4 +117,4 @@ const UpdateBrand = ({ item, onupdate }: Props) => {
   );
 };
 
-export default UpdateBrand;
+export default CreateCategory;
