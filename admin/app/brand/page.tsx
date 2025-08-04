@@ -1,7 +1,12 @@
+import BrandData from "@/components/commons/brand/BrandData";
 import React from "react";
 
 const Brand = () => {
-  return <div>Brand</div>;
+  return (
+    <>
+      <BrandData />
+    </>
+  );
 };
 
 export default Brand;
