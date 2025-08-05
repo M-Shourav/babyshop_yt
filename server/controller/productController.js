@@ -84,12 +84,6 @@ const createProducts = asyncHandler(async (req, res) => {
 });
 const deleteProducts = asyncHandler(async (req, res) => {
   try {
-    if (req.user.role !== "admin") {
-      return res.json({
-        success: false,
-        message: "Access denied,Admins only.",
-      });
-    }
     const product = await Products.findById(req.params.id);
     if (!product) {
       return res.json({

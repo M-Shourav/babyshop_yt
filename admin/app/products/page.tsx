@@ -1,7 +1,12 @@
+import ProductData from "@/components/commons/product/ProductData";
 import React from "react";
 
 const Products = () => {
-  return <div>ProductsPage</div>;
+  return (
+    <div>
+      <ProductData />
+    </div>
+  );
 };
 
 export default Products;

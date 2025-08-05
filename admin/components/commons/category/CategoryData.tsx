@@ -33,7 +33,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import UpdateCategory from "./UpdateCategory";
-
 import CreateCategory from "./CreateCategory";
 import {
   Pagination,
@@ -58,7 +57,6 @@ const CategoryData = () => {
   const [curPage, setCurPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
 
   // filtered category
   const filterData = category.filter((ct) => {
