@@ -92,7 +92,9 @@ const ProductData = () => {
         <CardTitle>Product page</CardTitle>
         <CardDescription>All products</CardDescription>
         <CardAction>
-          <Link href={"/products/create-product"}>Add product</Link>
+          <Button>
+            <Link href={"/products/create-product"}>Add product</Link>
+          </Button>
         </CardAction>
       </CardHeader>
       <CardContent>
