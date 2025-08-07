@@ -190,60 +190,6 @@ const CreateProductPage = () => {
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="grid gap-4">
-          {/* Image Upload Section */}
-          <div className="space-y-2">
-            <Label className="text-xs" htmlFor="images">
-              Upload product Images (max 3)
-            </Label>
-
-            {/* Upload Icon Button */}
-            {images.length < 3 && (
-              <Label
-                htmlFor="img"
-                onClick={() => imageInputRef.current?.click()}
-                className="w-40 h-40 border cursor-pointer rounded-md flex items-center justify-center"
-              >
-                <Upload id="img" size={60} />
-                <Input
-                  type="file"
-                  id="imageUpload"
-                  ref={imageInputRef}
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  multiple
-                  className="hidden"
-                />
-              </Label>
-            )}
-
-            {/* Image Previews */}
-            <div className="flex items-center gap-4 ">
-              {images.map((image, index) => (
-                <div
-                  key={index}
-                  className="relative group border rounded overflow-hidden w-40 h-40"
-                >
-                  <Image
-                    src={URL.createObjectURL(image)}
-                    alt={`preview-${index}`}
-                    width={50}
-                    height={50}
-                    className="w-full h-full object-cover"
-                  />
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute top-0 right-0 rounded-full w-6 h-6"
-                  >
-                    <X />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* product title */}
             <div className="space-y-2">
@@ -310,19 +256,6 @@ const CreateProductPage = () => {
             {/* brand & category */}
             <div className="grid grid-cols-2 gap-4">
               <div className=" space-y-2">
-                <Label className="text-xs" htmlFor="brand">
-                  Brand
-                </Label>
-                <Select
-                  id="brand"
-                  placeholder="Select brand"
-                  options={option}
-                  value={selectedBrand}
-                  onChange={(val) => setSelectedBrand(val)}
-                  className=" cursor-pointer"
-                />
-              </div>
-              <div className=" space-y-2">
                 <Label htmlFor="categories" className="text-xs">
                   Categories
                 </Label>
@@ -336,6 +269,18 @@ const CreateProductPage = () => {
                   }
                   placeholder-="Select Categories"
                   className=" cursor-pointer"
+                />
+              </div>
+              <div className=" space-y-2">
+                <Label htmlFor="tags" className="text-xs">
+                  Tags
+                </Label>
+                <Select
+                  id="tags"
+                  isMulti
+                  options={Tags}
+                  value={selectedTags}
+                  onChange={(value) => setSelectedTags(value as tagOption[])}
                 />
               </div>
               <div className="space-y-2">
@@ -353,15 +298,16 @@ const CreateProductPage = () => {
                 />
               </div>
               <div className=" space-y-2">
-                <Label htmlFor="tags" className="text-xs">
-                  Tags
+                <Label className="text-xs" htmlFor="brand">
+                  Brand
                 </Label>
                 <Select
-                  id="tags"
-                  isMulti
-                  options={Tags}
-                  value={selectedTags}
-                  onChange={(value) => setSelectedTags(value as tagOption[])}
+                  id="brand"
+                  placeholder="Select brand"
+                  options={option}
+                  value={selectedBrand}
+                  onChange={(val) => setSelectedBrand(val)}
+                  className=" cursor-pointer"
                 />
               </div>
             </div>
@@ -376,9 +322,63 @@ const CreateProductPage = () => {
               />
             </div>
           </div>
-        </CardContent>
-        <CardFooter className="flex-row-reverse">
-          <Button type="submit" disabled={loading}>
+
+          {/* Image Upload Section */}
+          <div className="space-y-2 flex flex-wrap items-center gap-4">
+            {/* Upload Icon Button */}
+            {images.length < 3 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold">
+                  Upload product Images (max 3)
+                </p>
+                <Label
+                  htmlFor="img"
+                  onClick={() => imageInputRef.current?.click()}
+                  className="w-36 h-36 border cursor-pointer rounded-md flex items-center justify-center"
+                >
+                  <Upload id="img" size={60} />
+                  <Input
+                    type="file"
+                    id="imageUpload"
+                    ref={imageInputRef}
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    multiple
+                    className="hidden"
+                  />
+                </Label>
+              </div>
+            )}
+
+            {/* Image Previews */}
+            <div className="grid grid-cols-2 md:grid-cols-3 items-center gap-4 mt-4">
+              {images.map((image, index) => (
+                <div
+                  key={index}
+                  className="relative group border rounded overflow-hidden w-36 h-36"
+                >
+                  <Image
+                    src={URL.createObjectURL(image)}
+                    alt={`preview-${index}`}
+                    width={50}
+                    height={50}
+                    className="w-full h-full object-cover"
+                  />
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute top-0 right-0 rounded-full w-6 h-6"
+                  >
+                    <X />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Button className="w-full max-w-sm mx-auto" type="submit">
             {loading ? (
               <div className="flex items-center gap-1">
                 <Loader2 className="mt-1 animate-spin" />
@@ -388,7 +388,8 @@ const CreateProductPage = () => {
               <p>Create product</p>
             )}
           </Button>
-        </CardFooter>
+        </CardContent>
+        {/* <CardFooter className="flex-row-reverse"></CardFooter> */}
       </form>
     </Card>
   );

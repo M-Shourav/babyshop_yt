@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Image from "next/image";
-import { Loader2, PencilIcon, Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -36,11 +36,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import EditProduct from "./EditProduct";
+import { EmptyProduct } from "@/assets/images";
 
 const ProductData = () => {
   const [product, setProduct] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const getProduct = async () => {
     try {
       const res = await axios.get(`${serverUrl}/api/product/all-product`, {
@@ -88,111 +88,147 @@ const ProductData = () => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Product page</CardTitle>
-        <CardDescription>All products</CardDescription>
-        <CardAction>
+      {product.length ? (
+        <>
+          <CardHeader>
+            <CardTitle>Product page</CardTitle>
+            <CardDescription>All products</CardDescription>
+            <CardAction>
+              <Button>
+                <Link href={"/products/create-product"}>Add product</Link>
+              </Button>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="hidden md:table-cell">List</TableHead>
+                  <TableHead>Image</TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Stock</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead className="text-center">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {product?.map((product, index) => (
+                  <TableRow key={product?._id}>
+                    <TableCell className="hidden md:table-cell">
+                      {index + 1}
+                    </TableCell>
+                    <TableCell>
+                      {product?.images && product.images.length > 0 && (
+                        <Image
+                          src={product.images[0].url}
+                          alt={product.images[0].public_id}
+                          width={40}
+                          height={40}
+                          className="w-10 h-10 object-fill rounded-sm"
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell>{product?.title}</TableCell>
+                    <TableCell>
+                      {product?.description.slice(0, 40)}...
+                    </TableCell>
+                    <TableCell
+                      className={`${
+                        product?.stock == 10
+                          ? "text-red-600"
+                          : "text-purple-700"
+                      } `}
+                    >
+                      <p className="bg-blue-100/40 w-fit p-3 rounded-sm font-semibold">
+                        {product?.stock}
+                      </p>
+                    </TableCell>
+                    <TableCell
+                      className={`${
+                        product?.price == 10
+                          ? "text-red-600"
+                          : "text-purple-700"
+                      } `}
+                    >
+                      <p className="bg-blue-100/40 w-fit p-3 rounded-sm font-semibold">
+                        {product?.price}
+                      </p>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-center gap-3">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="outline" size="icon">
+                              <Trash2 />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete product and remove data from
+                                servers.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(product?._id)}
+                                disabled={loading}
+                              >
+                                {loading ? (
+                                  <div className="flex items-center gap-1">
+                                    <Loader2 className="mt-1 animate-spin" />
+                                    <p>Deleting...</p>
+                                  </div>
+                                ) : (
+                                  <p>Continue</p>
+                                )}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                        <div>
+                          <EditProduct
+                            product={product}
+                            onupdate={getProduct}
+                          />
+                        </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </>
+      ) : (
+        <div className="text-center flex flex-col items-center justify-center py-12 px-4 ">
+          <Image
+            src={EmptyProduct}
+            alt="empty-product"
+            width={50}
+            height={50}
+            className=" animate-bounce"
+          />
+          <h2 className="text-xl font-semibold text-gray-700 mb-2 animate-pulse">
+            No Products Found!
+          </h2>
+          <p className="text-gray-500 mb-4 max-w-md text-center mx-auto">
+            You haven &apos;t added any products yet. Click the
+            <span className="font-medium text-slate-900"> "Add Product" </span>
+            button below to get started and showcase your offerings to your
+            customers.
+          </p>
           <Button>
-            <Link href={"/products/create-product"}>Add product</Link>
+            <Link href="/products/create-product">Add Product</Link>
           </Button>
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="hidden md:table-cell">List</TableHead>
-              <TableHead>Image</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Stock</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead className="text-center">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {product?.map((product, index) => (
-              <TableRow key={product?._id}>
-                <TableCell className="hidden md:table-cell">
-                  {index + 1}
-                </TableCell>
-                <TableCell>
-                  {product?.images && product.images.length > 0 && (
-                    <Image
-                      src={product.images[0].url}
-                      alt={product.images[0].public_id}
-                      width={40}
-                      height={40}
-                      className="w-10 h-10 object-fill rounded-sm"
-                    />
-                  )}
-                </TableCell>
-                <TableCell>{product?.title}</TableCell>
-                <TableCell>{product?.description.slice(0, 40)}</TableCell>
-                <TableCell
-                  className={`${
-                    product?.stock == 10 ? "text-red-600" : "text-purple-700"
-                  } `}
-                >
-                  <p className="bg-blue-100/40 w-fit p-3 rounded-sm font-semibold">
-                    {product?.stock}
-                  </p>
-                </TableCell>
-                <TableCell
-                  className={`${
-                    product?.price == 10 ? "text-red-600" : "text-purple-700"
-                  } `}
-                >
-                  <p className="bg-blue-100/40 w-fit p-3 rounded-sm font-semibold">
-                    {product?.price}
-                  </p>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center justify-center gap-3">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="icon">
-                          <Trash2 />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you absolutely sure?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete product and remove data from servers.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => handleDelete(product?._id)}
-                            disabled={loading}
-                          >
-                            {loading ? (
-                              <div className="flex items-center gap-1">
-                                <Loader2 className="mt-1 animate-spin" />
-                                <p>Deleting...</p>
-                              </div>
-                            ) : (
-                              <p>Continue</p>
-                            )}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                    <div>
-                      <EditProduct product={product} onupdate={getProduct} />
-                    </div>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
+        </div>
+      )}
     </Card>
   );
 };

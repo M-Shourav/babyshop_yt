@@ -91,11 +91,16 @@ const deleteProducts = asyncHandler(async (req, res) => {
         message: "product not found",
       });
     }
-
     // delete images from cloudinary
-    for (const img of product?.images) {
-      await cloudinary.uploader.destroy(img?.public_id);
-    }
+    const deleteImages = product?.images.map((img) => {
+      if (img?.public_id) {
+        return cloudinary.uploader.destroy(img?.public_id);
+      }
+    });
+
+    await Promise.all(deleteImages);
+
+    // Delete product from database
     await Products.findByIdAndDelete(product);
 
     return res.json({
