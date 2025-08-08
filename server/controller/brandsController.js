@@ -1,5 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Brand from "../models/brandsModels.js";
+import cloudinary from "../utils/cloudinary.js";
+import fs from "fs";
 
 const createBrand = asyncHandler(async (req, res) => {
   try {
@@ -19,9 +21,24 @@ const createBrand = asyncHandler(async (req, res) => {
       });
     }
 
+    let images;
+    if (req.file) {
+      const file = await cloudinary.uploader.upload(req.file?.path, {
+        folder: "brand-image",
+        resource_type: "image",
+      });
+
+      images = {
+        url: file?.secure_url,
+        public_id: file?.public_id,
+      };
+      fs.unlinkSync(req.file?.path);
+    }
+
     const brand = await Brand.create({
       name,
       description,
+      images,
     });
 
     return res.json({
@@ -46,6 +63,11 @@ const deleteBrand = asyncHandler(async (req, res) => {
         message: "No brands found.",
       });
     }
+
+    if (brandsId?.images.public_id) {
+      await cloudinary.uploader.destroy(brandsId.images.public_id);
+    }
+
     await Brand.findByIdAndDelete(brandsId);
     return res.json({
       success: true,
@@ -72,6 +94,23 @@ const updateBrand = asyncHandler(async (req, res) => {
 
     if (name) brand.name = name;
     if (description) brand.description = description;
+
+    if (req.file) {
+      if (brand?.images && brand.images.public_id) {
+        await cloudinary.uploader.destroy(brand?.images.public_id);
+      }
+
+      const updateImage = await cloudinary.uploader.upload(req.file?.path, {
+        folder: "brand-image",
+        resource_type: "image",
+      });
+
+      brand.images = {
+        url: updateImage.secure_url,
+        public_id: updateImage.public_id,
+      };
+      fs.unlinkSync(req.file?.path);
+    }
 
     const update = await brand.save();
 

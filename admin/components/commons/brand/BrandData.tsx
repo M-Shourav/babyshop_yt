@@ -28,8 +28,8 @@ import {
 } from "@/components/ui/table";
 import { serverUrl } from "@/config";
 import axios from "axios";
-import { ListFilter, Loader2, Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { ListFilter, Loader2, Trash2, Upload, X } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import UpdateBrand from "./UpdateBrand";
 import { BrandsType } from "@/types/brandType";
@@ -61,16 +61,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Image from "next/image";
 
 const BrandData = () => {
   const [brand, setBrand] = useState<BrandsType[]>([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState<File | null>(null);
+  const [prevImg, setPreviewImg] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const filterBrand = brand.filter((brand) => {
     const sc = searchTerm.toLowerCase();
@@ -101,21 +105,31 @@ const BrandData = () => {
 
   const createBrand = async () => {
     setLoading(true);
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    if (image) {
+      formData.append("images", image);
+    }
+
     try {
       const res = await axios.post(
         `${serverUrl}/api/brand/createBrand`,
-        { name, description },
+        formData,
         {
           withCredentials: true,
         }
       );
       const data = res?.data;
+      console.log(data);
+
       if (data?.success) {
         toast.success(data?.message);
         await getBrand();
         setIsOpen(false);
         setName("");
         setDescription("");
+        setImage(null);
       }
     } catch (error) {
       console.log("Failed to create brand:", error);
@@ -146,6 +160,14 @@ const BrandData = () => {
       console.log("Failed delete brand:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      setPreviewImg(URL.createObjectURL(file));
     }
   };
 
@@ -215,6 +237,49 @@ const BrandData = () => {
               </DialogHeader>
               <div className=" grid gap-4">
                 <div className=" space-y-2">
+                  <Label className="text-xs">
+                    {image && prevImg ? (
+                      <p>Change image</p>
+                    ) : (
+                      <p>Upload Brand image</p>
+                    )}
+                  </Label>
+                  {image && prevImg ? (
+                    <div className=" relative w-28 h-28 border border-red-400 rounded-sm">
+                      <Image
+                        src={prevImg}
+                        alt="prev-img"
+                        width={50}
+                        height={50}
+                        className="w-full object-cover rounded-sm"
+                      />
+
+                      <Button
+                        className="absolute top-1 right-1 w-6 h-6 rounded-full"
+                        variant="destructive"
+                        onClick={() => setPreviewImg(null)}
+                      >
+                        <X />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-28 h-28 flex flex-col items-center justify-center border rounded-md cursor-pointer"
+                    >
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        className=" hidden"
+                        onChange={handleImage}
+                      />
+
+                      <Upload size={30} />
+                    </div>
+                  )}
+                </div>
+                <div className=" space-y-2">
                   <Label htmlFor="name" className="text-xs font-semibold">
                     Brand Name
                   </Label>
@@ -272,6 +337,7 @@ const BrandData = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>List</TableHead>
+                <TableHead>Image</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead className=" hidden md:table-cell">
                   Description
@@ -285,6 +351,14 @@ const BrandData = () => {
                 <TableRow key={index}>
                   <TableCell>
                     {(currentPage - 1) * itemPerPage + index + 1}
+                  </TableCell>
+                  <TableCell>
+                    {/* <Image
+                      src={item?.images}
+                      alt="brand-image"
+                      width={50}
+                      height={50}
+                    /> */}
                   </TableCell>
                   <TableCell>{item?.name}</TableCell>
                   <TableCell className=" hidden md:table-cell">

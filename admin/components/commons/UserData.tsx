@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "../ui/table";
 import Image from "next/image";
-import { EllipsisVertical, Funnel, ListFilter, X } from "lucide-react";
+import { EllipsisVertical, ListFilter, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";

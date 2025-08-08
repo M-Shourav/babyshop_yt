@@ -32,12 +32,6 @@ const createProducts = asyncHandler(async (req, res) => {
         message: "Brand is required!",
       });
     }
-    // if (!category) {
-    //   return res.json({
-    //     success: false,
-    //     message: "Category is required!",
-    //   });
-    // }
 
     const images = [];
     for (const file of req.files) {
