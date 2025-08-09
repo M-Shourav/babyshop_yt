@@ -3,5 +3,9 @@ export interface BrandsType {
   name: string;
   description: string;
   slug: string;
-  images: string;
+  images: {
+    url: string;
+    public_id: string;
+    _id: string;
+  };
 }

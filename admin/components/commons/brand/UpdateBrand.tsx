@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { serverUrl } from "@/config";
 import axios from "axios";
 import {
@@ -13,12 +13,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, PencilLine } from "lucide-react";
+import { Loader2, PencilIcon, PencilLine, Trash2, Upload } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { BrandsType } from "@/types/brandType";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 interface Props {
   item: BrandsType;
@@ -28,18 +29,25 @@ interface Props {
 const UpdateBrand = ({ item, onupdate }: Props) => {
   const [name, setName] = useState(item?.name);
   const [description, setDes] = useState(item?.description);
+  const [image, setImage] = useState(item?.images);
+  const [newImage, setNewImage] = useState<File | null>(null);
+  const [previewImg, setPreviewImg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const inputFileRef = useRef<HTMLInputElement | null>(null);
 
   const handleUpdate = async () => {
     setLoading(true);
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    if (newImage) {
+      formData.append("images", newImage);
+    }
     try {
       const res = await axios.put(
         `${serverUrl}/api/brand/updateBrand/${item?._id}`,
-        {
-          name,
-          description,
-        },
+        formData,
         {
           withCredentials: true,
         }
@@ -59,6 +67,16 @@ const UpdateBrand = ({ item, onupdate }: Props) => {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewImage(file);
+      setPreviewImg(URL.createObjectURL(file));
+    } else {
+      return null;
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -75,6 +93,63 @@ const UpdateBrand = ({ item, onupdate }: Props) => {
         </DialogHeader>
 
         <div className="grid gap-4">
+          <div>
+            {!image.url && !previewImg && (
+              <div
+                onClick={() => inputFileRef.current?.click()}
+                className="w-24 h-24 border rounded-md cursor-pointer flex items-center justify-center "
+              >
+                <Input
+                  type="file"
+                  id="avatar"
+                  accept="image/*"
+                  ref={inputFileRef}
+                  width={50}
+                  height={50}
+                  onChange={handleImageChange}
+                  className=" hidden"
+                  disabled={loading}
+                />
+                <Upload size={30} />
+              </div>
+            )}
+
+            {previewImg && !image.url && (
+              <div className=" relative w-24 h-24 flex items-center justify-center border rounded-md">
+                <Image
+                  src={previewImg}
+                  alt="Preview"
+                  width={80}
+                  height={80}
+                  className="w-full object-cover "
+                />
+                <span
+                  onClick={() => setPreviewImg(null)}
+                  className="absolute top-0 right-0 bg-red-500/70 w-8 h-8 flex items-center justify-center text-white text-xs px-1 rounded-full cursor-pointer hover:bg-red-500"
+                >
+                  <Trash2 size={18} />
+                </span>
+              </div>
+            )}
+            {image.url && (
+              <div className="relative w-24 h-24 flex items-center justify-center">
+                <Image
+                  src={image.url}
+                  alt="brand-image"
+                  width={80}
+                  height={80}
+                  className="rounded-md w-full p-2 object-cover ring-1 ring-purple-500"
+                />
+                <span
+                  onClick={() => setImage({ url: "", public_id: "", _id: "" })}
+                  className="absolute top-0 right-0 bg-red-500/70 w-8 h-8 flex items-center justify-center text-white text-xs px-1 rounded-full cursor-pointer hover:bg-red-500"
+                >
+                  <Trash2 size={18} />
+                </span>
+              </div>
+            )}
+          </div>
+
           <div className=" space-y-2">
             <Label className="text-xs font-semibold">Brand Name</Label>
             <Input

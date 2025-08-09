@@ -353,12 +353,12 @@ const BrandData = () => {
                     {(currentPage - 1) * itemPerPage + index + 1}
                   </TableCell>
                   <TableCell>
-                    {/* <Image
-                      src={item?.images}
+                    <Image
+                      src={item?.images?.url}
                       alt="brand-image"
                       width={50}
                       height={50}
-                    /> */}
+                    />
                   </TableCell>
                   <TableCell>{item?.name}</TableCell>
                   <TableCell className=" hidden md:table-cell">
