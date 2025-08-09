@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -18,7 +17,7 @@ import { Loader2, Upload } from "lucide-react";
 import dynamic from "next/dynamic";
 import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 const Select = dynamic(() => import("react-select"), { ssr: false });
@@ -181,6 +180,7 @@ const CreateProductPage = () => {
       console.log("Failed to create product:", error);
     }
   };
+  console.log(category);
 
   return (
     <Card>
@@ -288,10 +288,10 @@ const CreateProductPage = () => {
                   Stock
                 </Label>
                 <Input
-                  type="number"
+                  type="text"
                   id="stock"
                   placeholder="00"
-                  className="remove-spinner focus-visible:ring-0"
+                  className="focus-visible:ring-0"
                   value={stock}
                   onChange={(e) => setStock(e.target.value)}
                   required
@@ -322,7 +322,6 @@ const CreateProductPage = () => {
               />
             </div>
           </div>
-
           {/* Image Upload Section */}
           <div className="space-y-2 flex flex-wrap items-center gap-4">
             {/* Upload Icon Button */}
@@ -389,7 +388,6 @@ const CreateProductPage = () => {
             )}
           </Button>
         </CardContent>
-        {/* <CardFooter className="flex-row-reverse"></CardFooter> */}
       </form>
     </Card>
   );

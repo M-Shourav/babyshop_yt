@@ -210,9 +210,7 @@ const ProductData = () => {
                     </TableCell>
                     <TableCell
                       className={`${
-                        product?.stock == 10
-                          ? "text-red-600"
-                          : "text-purple-700"
+                        product?.stock === "available" ? "text-purple-700" : ""
                       } `}
                     >
                       <p className="bg-blue-100/40 w-fit p-3 rounded-sm font-semibold">

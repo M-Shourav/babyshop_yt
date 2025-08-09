@@ -4,11 +4,13 @@ export interface ProductType {
   description: string;
   price: number;
   discount: number;
-  stock: number;
+  stock: string;
   slug: string;
   isFeatured: boolean;
-  brand: string;
-  category: string;
+  brand: {
+    name: string;
+  };
+  category: [name: string];
   tags: string[];
   images: {
     _id: string;

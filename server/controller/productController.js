@@ -26,13 +26,6 @@ const createProducts = asyncHandler(async (req, res) => {
       });
     }
 
-    if (!brand) {
-      return res.json({
-        success: false,
-        message: "Brand is required!",
-      });
-    }
-
     const images = [];
     for (const file of req.files) {
       const filePath = path.join(file.path);
@@ -209,7 +202,9 @@ const singleProducts = asyncHandler(async (req, res) => {
 const allProducts = asyncHandler(async (req, res) => {
   try {
     const total = await Products.countDocuments({});
-    const products = await Products.find({});
+    const products = await Products.find()
+      .populate("brand", "name _id")
+      .populate("category", "name _id");
     return res.json({
       success: true,
       total,

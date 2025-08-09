@@ -46,8 +46,8 @@ const productSchema = new mongoose.Schema(
     ],
     images: [imageSchema],
     stock: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: "",
     },
     tags: [String],
     isFeatured: {
