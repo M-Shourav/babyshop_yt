@@ -88,7 +88,7 @@ const CreateCategory = ({ onupdate }: Props) => {
             <Textarea
               name="description"
               id="description"
-              placeholder="Enter category name"
+              placeholder="Enter category description"
               className="h-24 focus-visible:ring-0 resize-none"
               value={description}
               onChange={(e) => setDescription(e.target.value)}

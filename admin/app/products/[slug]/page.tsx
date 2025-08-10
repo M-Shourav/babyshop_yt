@@ -277,6 +277,7 @@ const CreateProductPage = () => {
                   className="remove-spinner focus-visible:ring-0"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
+                  onWheel={(e) => e.currentTarget.blur()}
                   required
                 />
               </div>
@@ -291,6 +292,7 @@ const CreateProductPage = () => {
                   className="remove-spinner focus-visible:ring-0"
                   value={discount}
                   onChange={(e) => setDiscount(e.target.value)}
+                  onWheel={(e) => e.currentTarget.blur()}
                   required
                 />
               </div>
