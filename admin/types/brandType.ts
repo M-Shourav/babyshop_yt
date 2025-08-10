@@ -9,3 +9,8 @@ export interface BrandsType {
     _id: string;
   };
 }
+
+export interface BrandOption {
+  value: string;
+  label: string;
+}

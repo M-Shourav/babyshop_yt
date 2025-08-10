@@ -180,7 +180,6 @@ const CreateProductPage = () => {
       console.log("Failed to create product:", error);
     }
   };
-  console.log(category);
 
   return (
     <Card>

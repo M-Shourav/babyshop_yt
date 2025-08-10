@@ -1,3 +1,6 @@
+import { BrandsType } from "./brandType";
+import { CategoryType } from "./categoryType";
+
 export interface ProductType {
   _id: string;
   title: string;
@@ -7,10 +10,8 @@ export interface ProductType {
   stock: string;
   slug: string;
   isFeatured: boolean;
-  brand: {
-    name: string;
-  };
-  category: [name: string];
+  brand: BrandsType;
+  category: CategoryType[];
   tags: string[];
   images: {
     _id: string;

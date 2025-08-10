@@ -7,3 +7,8 @@ export type CategoryType = {
   updatedAt: string;
   __v: number;
 };
+
+export interface CategoryOption {
+  value: string;
+  label: string;
+}

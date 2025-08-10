@@ -67,10 +67,11 @@ const ProductData = () => {
   });
 
   // paginate product per page
-  const paginate = filterProduct?.slice(
+  const paginate = filterProduct.slice(
     (currentPage - 1) * productPerPage,
     currentPage * productPerPage
   );
+
   // total page
   const totalPage = Math.ceil(filterProduct.length / productPerPage);
 
@@ -84,10 +85,11 @@ const ProductData = () => {
       if (data?.success) {
         setProduct(data?.products);
       } else {
-        toast.error(data?.message);
+        toast.error(data?.message || "Failed to fetch products");
       }
     } catch (error) {
-      console.log("Failed to get product:", error);
+      console.error("Failed to get product:", error);
+      toast.error("Failed to get product");
     }
   };
 
@@ -105,11 +107,12 @@ const ProductData = () => {
       const data = res.data;
       if (data?.success) {
         toast.success(data?.message);
-        setProduct((prev) => prev.filter((p: ProductType) => p._id !== id));
+        setProduct((prev) => prev.filter((p) => p._id !== id));
         await getProduct();
       }
     } catch (error) {
-      console.log("Failed to delete product:", error);
+      console.error("Failed to delete product:", error);
+      toast.error("Failed to delete product");
     } finally {
       setLoading(false);
     }
@@ -133,11 +136,9 @@ const ProductData = () => {
                 <Input
                   type="text"
                   placeholder="Search product with title..."
-                  className=" placeholder:text-sm placeholder:font-normal focus-visible:ring-0 w-[200px]"
+                  className="placeholder:text-sm placeholder:font-normal focus-visible:ring-0 w-[200px]"
                   value={searchPd}
-                  onChange={(e) => {
-                    setSearchPd(e.target.value);
-                  }}
+                  onChange={(e) => setSearchPd(e.target.value)}
                 />
               </div>
             </CardTitle>
@@ -148,23 +149,21 @@ const ProductData = () => {
                   setProductPerPage(Number(value));
                   setCurrentPage(1);
                 }}
+                value={productPerPage.toString()}
               >
-                <SelectTrigger className=" focus-visible:ring-0">
-                  <SelectValue placeholder={productPerPage} />
+                <SelectTrigger className="focus-visible:ring-0">
+                  <SelectValue placeholder={`${productPerPage}`} />
                 </SelectTrigger>
                 <SelectContent className="min-w-[20px]">
-                  <SelectItem value="20" className=" cursor-pointer">
-                    20
-                  </SelectItem>
-                  <SelectItem value="50" className=" cursor-pointer">
-                    50
-                  </SelectItem>
-                  <SelectItem value="70" className=" cursor-pointer">
-                    70
-                  </SelectItem>
-                  <SelectItem value="100" className=" cursor-pointer">
-                    100
-                  </SelectItem>
+                  {[10, 20, 50, 70, 100].map((num) => (
+                    <SelectItem
+                      key={num}
+                      value={num.toString()}
+                      className="cursor-pointer"
+                    >
+                      {num}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </CardDescription>
@@ -188,13 +187,13 @@ const ProductData = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginate?.map((product, index) => (
-                  <TableRow key={product?._id}>
+                {paginate.map((product, index) => (
+                  <TableRow key={product._id}>
                     <TableCell className="hidden md:table-cell">
                       {index + 1}
                     </TableCell>
                     <TableCell>
-                      {product?.images && product.images.length > 0 && (
+                      {product.images && product.images.length > 0 && (
                         <Image
                           src={product.images[0].url}
                           alt={product.images[0].public_id}
@@ -204,28 +203,26 @@ const ProductData = () => {
                         />
                       )}
                     </TableCell>
-                    <TableCell>{product?.title}</TableCell>
-                    <TableCell>
-                      {product?.description.slice(0, 40)}...
-                    </TableCell>
+                    <TableCell>{product.title}</TableCell>
+                    <TableCell>{product.description.slice(0, 40)}...</TableCell>
                     <TableCell
                       className={`${
-                        product?.stock === "available" ? "text-purple-700" : ""
-                      } `}
+                        product.stock === "available" ? "text-purple-700" : ""
+                      }`}
                     >
                       <p className="bg-blue-100/40 w-fit p-3 rounded-sm font-semibold">
-                        {product?.stock}
+                        {product.stock}
                       </p>
                     </TableCell>
                     <TableCell
                       className={`${
-                        product?.price == 10
+                        product.price === 10
                           ? "text-red-600"
                           : "text-purple-700"
-                      } `}
+                      }`}
                     >
                       <p className="bg-blue-100/40 w-fit p-3 rounded-sm font-semibold">
-                        {product?.price}
+                        {product.price}
                       </p>
                     </TableCell>
                     <TableCell>
@@ -250,7 +247,7 @@ const ProductData = () => {
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => handleDelete(product?._id)}
+                                onClick={() => handleDelete(product._id)}
                                 disabled={loading}
                               >
                                 {loading ? (
@@ -265,12 +262,7 @@ const ProductData = () => {
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
-                        <div>
-                          <EditProduct
-                            product={product}
-                            onupdate={getProduct}
-                          />
-                        </div>
+                        <EditProduct product={product} onupdate={getProduct} />
                       </div>
                     </TableCell>
                   </TableRow>
@@ -280,33 +272,31 @@ const ProductData = () => {
             <div className="mt-10 flex items-center justify-between">
               <p className="text-sm w-full flex items-center font-semibold text-muted-foreground">
                 Total Pages:{" "}
-                <span className="ml-2 text-red-500"> {totalPage}</span>
+                <span className="ml-2 text-red-500">{totalPage}</span>
               </p>
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious
-                      onClick={() => {
-                        setCurrentPage((prev) => Math.max(prev - 1, 1));
-                      }}
-                      className={`${
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
+                      className={
                         currentPage === 1
-                          ? " pointer-events-none opacity-50"
-                          : " cursor-pointer"
-                      }`}
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
                     />
                   </PaginationItem>
                   {[...Array(totalPage)].map((_, i) => (
                     <PaginationItem key={i}>
                       <Button
-                        onClick={() => {
-                          setCurrentPage(i + 1);
-                        }}
+                        onClick={() => setCurrentPage(i + 1)}
                         className={`px-3 py-1 text-xs border border-gray-600 w-7 h-7 flex items-center justify-center ${
                           currentPage === i + 1
                             ? "bg-black text-white"
                             : "bg-white text-black hover:text-white duration-200"
-                        } `}
+                        }`}
                         size="icon"
                       >
                         {i + 1}
@@ -315,14 +305,14 @@ const ProductData = () => {
                   ))}
                   <PaginationItem>
                     <PaginationNext
-                      onClick={() => {
-                        setCurrentPage((prev) => Math.min(prev + 1, totalPage));
-                      }}
-                      className={`${
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPage))
+                      }
+                      className={
                         currentPage === totalPage
-                          ? " pointer-events-none opacity-50"
+                          ? "pointer-events-none opacity-50"
                           : "cursor-pointer"
-                      }`}
+                      }
                     />
                   </PaginationItem>
                 </PaginationContent>
@@ -331,20 +321,20 @@ const ProductData = () => {
           </CardContent>
         </>
       ) : (
-        <div className="text-center flex flex-col items-center justify-center py-12 px-4 ">
+        <div className="text-center flex flex-col items-center justify-center py-12 px-4">
           <Image
             src={EmptyProduct}
             alt="empty-product"
             width={50}
             height={50}
-            className=" animate-bounce"
+            className="animate-bounce"
           />
           <h2 className="text-xl font-semibold text-gray-700 mb-2 animate-pulse">
             No Products Found!
           </h2>
           <p className="text-gray-500 mb-4 max-w-md text-center mx-auto">
-            You haven &apos;t added any products yet. Click the
-            <span className="font-medium text-slate-900"> "Add Product" </span>
+            You haven&apos;t added any products yet. Click the{" "}
+            <span className="font-medium text-slate-900">"Add Product"</span>{" "}
             button below to get started and showcase your offerings to your
             customers.
           </p>
