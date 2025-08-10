@@ -39,6 +39,24 @@ type categoryOption = {
   value: string;
   label: string;
 };
+
+const Tags = [
+  { value: "new", label: "New" },
+  { value: "sale", label: "Sale" },
+  { value: "popular", label: "Popular" },
+  { value: "featured", label: "Featured" },
+  { value: "limited", label: "Limited" },
+  { value: "trending", label: "Trending" },
+  { value: "exclusive", label: "Exclusive" },
+  { value: "bestseller", label: "Bestseller" },
+  { value: "eco-friendly", label: "Eco-Friendly" },
+  { value: "handmade", label: "Handmade" },
+  { value: "luxury", label: "Luxury" },
+  { value: "budget", label: "Budget" },
+  { value: "fast-delivery", label: "Fast Delivery" },
+  { value: "discount", label: "Discount" },
+  { value: "limited-stock", label: "Limited Stock" },
+];
 const CreateProductPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -61,10 +79,16 @@ const CreateProductPage = () => {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files) {
-      const selectedFiles = Array.from(files).slice(0, 3 - images.length); // বাকি কয়টা নেয়া যাবে
-      setImages((prevImages) => [...prevImages, ...selectedFiles]);
+
+    if (!files) return;
+
+    if (images.length >= 3) {
+      toast.error("You can upload maximum 3 images!");
+      return;
     }
+
+    const selectedFiles = Array.from(files).slice(0, 3 - images.length); // বাকি কয়টা নেয়া যাবে
+    setImages((prevImages) => [...prevImages, ...selectedFiles]);
   };
   const removeImage = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
@@ -120,24 +144,6 @@ const CreateProductPage = () => {
     label: bn?.name,
   }));
 
-  const Tags = [
-    { value: "new", label: "New" },
-    { value: "sale", label: "Sale" },
-    { value: "popular", label: "Popular" },
-    { value: "featured", label: "Featured" },
-    { value: "limited", label: "Limited" },
-    { value: "trending", label: "Trending" },
-    { value: "exclusive", label: "Exclusive" },
-    { value: "bestseller", label: "Bestseller" },
-    { value: "eco-friendly", label: "Eco-Friendly" },
-    { value: "handmade", label: "Handmade" },
-    { value: "luxury", label: "Luxury" },
-    { value: "budget", label: "Budget" },
-    { value: "fast-delivery", label: "Fast Delivery" },
-    { value: "discount", label: "Discount" },
-    { value: "limited-stock", label: "Limited Stock" },
-  ];
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
@@ -187,8 +193,61 @@ const CreateProductPage = () => {
         <CardTitle>Create product data</CardTitle>
         <CardDescription>product data</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="grid gap-4">
+      <CardContent>
+        <form onSubmit={handleSubmit} className="grid gap-4">
+          {/* Image Upload Section */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* upload image */}
+            <div>
+              {images.length <= 3 && (
+                <Label
+                  htmlFor="img"
+                  onClick={() => imageInputRef.current?.click()}
+                  className="w-28 h-28 border cursor-pointer rounded-md flex flex-col items-center justify-center"
+                >
+                  <Upload id="img" size={35} />
+                  <p className="text-xs font-semibold text-muted-foreground">
+                    Upload (Max 3)
+                  </p>
+                  <Input
+                    type="file"
+                    id="imageUpload"
+                    ref={imageInputRef}
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </Label>
+              )}
+            </div>
+
+            {/* preview image */}
+            {images?.map((img, index) => (
+              <div
+                key={index}
+                className=" relative w-28 h-28 border-2 rounded-md flex items-center justify-center overflow-hidden"
+              >
+                <Image
+                  src={URL.createObjectURL(img)}
+                  alt={`preview-${index}`}
+                  width={50}
+                  height={50}
+                  className="w-full object-cover"
+                />
+
+                <Button
+                  className="absolute top-1 right-1 w-5 h-5 rounded-full"
+                  size="icon"
+                  variant="destructive"
+                  onClick={() => removeImage(index)}
+                >
+                  <X />
+                </Button>
+              </div>
+            ))}
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* product title */}
             <div className="space-y-2">
@@ -263,6 +322,7 @@ const CreateProductPage = () => {
                   isMulti
                   options={options}
                   value={selectedCategories}
+                  menuPlacement="top"
                   onChange={(value) =>
                     setSelectedCategories(value as categoryOption[])
                   }
@@ -279,6 +339,7 @@ const CreateProductPage = () => {
                   isMulti
                   options={Tags}
                   value={selectedTags}
+                  menuPlacement="top"
                   onChange={(value) => setSelectedTags(value as tagOption[])}
                 />
               </div>
@@ -303,6 +364,7 @@ const CreateProductPage = () => {
                 <Select
                   id="brand"
                   placeholder="Select brand"
+                  menuPlacement="top"
                   options={option}
                   value={selectedBrand}
                   onChange={(val) => setSelectedBrand(val)}
@@ -321,73 +383,20 @@ const CreateProductPage = () => {
               />
             </div>
           </div>
-          {/* Image Upload Section */}
-          <div className="space-y-2 flex flex-wrap items-center gap-4">
-            {/* Upload Icon Button */}
-            {images.length < 3 && (
-              <div className="space-y-2">
-                <p className="text-xs font-semibold">
-                  Upload product Images (max 3)
-                </p>
-                <Label
-                  htmlFor="img"
-                  onClick={() => imageInputRef.current?.click()}
-                  className="w-36 h-36 border cursor-pointer rounded-md flex items-center justify-center"
-                >
-                  <Upload id="img" size={60} />
-                  <Input
-                    type="file"
-                    id="imageUpload"
-                    ref={imageInputRef}
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    multiple
-                    className="hidden"
-                  />
-                </Label>
-              </div>
-            )}
-
-            {/* Image Previews */}
-            <div className="grid grid-cols-2 md:grid-cols-3 items-center gap-4 mt-4">
-              {images.map((image, index) => (
-                <div
-                  key={index}
-                  className="relative group border rounded overflow-hidden w-36 h-36"
-                >
-                  <Image
-                    src={URL.createObjectURL(image)}
-                    alt={`preview-${index}`}
-                    width={50}
-                    height={50}
-                    className="w-full h-full object-cover"
-                  />
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute top-0 right-0 rounded-full w-6 h-6"
-                  >
-                    <X />
-                  </Button>
+          <div className="flex flex-row-reverse">
+            <Button type="submit" disabled={loading}>
+              {loading ? (
+                <div className="flex items-center gap-1">
+                  <Loader2 className="mt-1 animate-spin" />
+                  <p>Processing...</p>
                 </div>
-              ))}
-            </div>
+              ) : (
+                <p>Create product</p>
+              )}
+            </Button>
           </div>
-
-          <Button className="w-full max-w-sm mx-auto" type="submit">
-            {loading ? (
-              <div className="flex items-center gap-1">
-                <Loader2 className="mt-1 animate-spin" />
-                <p>Processing...</p>
-              </div>
-            ) : (
-              <p>Create product</p>
-            )}
-          </Button>
-        </CardContent>
-      </form>
+        </form>
+      </CardContent>
     </Card>
   );
 };

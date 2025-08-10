@@ -17,6 +17,7 @@ export interface ProductType {
     _id: string;
     url: string;
     public_id: string;
+    file?: File;
   }[];
   createdAt: string;
   updatedAt: string;
