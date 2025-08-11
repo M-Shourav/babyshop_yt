@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import brandRouter from "./routes/brandsRoutes.js";
 import categoryRouter from "./routes/categoryRoutes.js";
 import productRouter from "./routes/productRoutes.js";
+import bannerRouter from "./routes/bannerRoutes.js";
 const app = express();
 dotenv.config();
 const port = process.env.PORT || 8000;
@@ -29,6 +30,7 @@ app.use(process.env.USER, router);
 app.use(process.env.BRAND, brandRouter);
 app.use(process.env.CATEGORY, categoryRouter);
 app.use(process.env.PRODUCT, productRouter);
+app.use(process.env.BANNER, bannerRouter);
 app.get("/", (req, res) => {
   res.send("Hello Style-Mert server");
 });
