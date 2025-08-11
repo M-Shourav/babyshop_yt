@@ -77,11 +77,11 @@ const AdminChart = () => {
       <CardFooter className="flex items-center justify-center gap-4">
         <div className="flex items-center gap-x-2">
           <span className="w-4 h-4 bg-[#954C2E] inline-flex" />
-          <p>User</p>
+          <p className="text-sm font-semibold">User</p>
         </div>
         <div className="flex items-center gap-x-2">
           <span className="w-4 h-4 bg-[#1A2A80] inline-flex" />
-          <p>Admin</p>
+          <p className="text-sm font-semibold">Admin</p>
         </div>
       </CardFooter>
     </Card>
