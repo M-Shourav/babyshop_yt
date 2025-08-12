@@ -30,12 +30,12 @@ import {
 import { serverUrl } from "@/config";
 import { BannerType } from "@/types/bannerType";
 import axios from "axios";
-import { PencilIcon, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import UpdateBanner from "./UpdateBanner";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import CreateBanner from "./CreateBanner";
 
 const BannerData = () => {
   const [loading, setLoading] = useState(false);
@@ -85,6 +85,7 @@ const BannerData = () => {
   useEffect(() => {
     getBanner();
   }, []);
+
   return (
     <Card>
       <CardHeader className="flex items-center justify-between gap-4">
@@ -92,7 +93,9 @@ const BannerData = () => {
         <CardDescription className="hidden md:inline-flex">
           per page
         </CardDescription>
-        <CardAction>Create banner</CardAction>
+        <CardAction>
+          <CreateBanner onupdate={getBanner} />
+        </CardAction>
       </CardHeader>
       <CardContent>
         <div className="max-w-3xl">

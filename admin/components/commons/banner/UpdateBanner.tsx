@@ -116,7 +116,7 @@ const UpdateBanner = ({ item, onupdate }: Props) => {
             )}
 
             {previewImg && !image.url && (
-              <div className=" relative w-24 h-24 flex items-center justify-center border rounded-md">
+              <div className=" relative w-40 h-32 flex items-center justify-center border rounded-md">
                 <Image
                   src={previewImg}
                   alt="Preview"
@@ -133,7 +133,7 @@ const UpdateBanner = ({ item, onupdate }: Props) => {
               </div>
             )}
             {image.url && (
-              <div className="relative w-24 h-24 flex items-center justify-center">
+              <div className="relative w-40 h-32 flex items-center justify-center">
                 <Image
                   src={image.url}
                   alt="brand-image"
