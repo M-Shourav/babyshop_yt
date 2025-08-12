@@ -334,7 +334,9 @@ const ProductData = () => {
           </h2>
           <p className="text-gray-500 mb-4 max-w-md text-center mx-auto">
             You haven&apos;t added any products yet. Click the{" "}
-            <span className="font-medium text-slate-900">"Add Product"</span>{" "}
+            <span className="font-medium text-slate-900">
+              &quot;Add Product&quot;
+            </span>{" "}
             button below to get started and showcase your offerings to your
             customers.
           </p>

@@ -27,7 +27,6 @@ import { useState } from "react";
 import axios from "axios";
 import { serverUrl } from "@/config";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email"),
@@ -39,7 +38,6 @@ const formSchema = z.object({
 
 const SignInForm = () => {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

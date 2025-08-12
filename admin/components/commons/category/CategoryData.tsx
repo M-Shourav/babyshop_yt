@@ -112,7 +112,7 @@ const CategoryData = () => {
         toast.error(data?.message);
       }
     } catch (error) {
-      console.log("Failed to category delete.");
+      console.log("Failed to category delete.", error);
     } finally {
       setLoading(false);
     }
@@ -226,6 +226,7 @@ const CategoryData = () => {
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
+                            disabled={loading}
                             className="hover:text-red-500"
                             onClick={() => handleDelete(cat?._id)}
                           >

@@ -6,7 +6,7 @@ import axios from "axios";
 import { serverUrl } from "@/config";
 
 const customLabel = ({ name, percent }: any) => {
-  const label = `${(percent * 100).toFixed(0)}% ${name}`;
+  const label = `${((percent as number) * 100).toFixed(0)}% ${name as string}`;
   return label;
 };
 

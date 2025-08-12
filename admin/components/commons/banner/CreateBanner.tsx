@@ -41,6 +41,12 @@ const CreateBanner = ({ onupdate }: Props) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!image) {
+      toast.error("Image no added");
+      return;
+    }
+
     setLoading(true);
     const formData = new FormData();
     formData.append("title", title);

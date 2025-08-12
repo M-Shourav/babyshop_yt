@@ -87,6 +87,7 @@ const BrandData = () => {
   );
 
   const totalPage = Math.ceil(brand.length / itemPerPage);
+
   const getBrand = async () => {
     try {
       const res = await axios.get(`${serverUrl}/api/brand/brands`, {
@@ -104,6 +105,11 @@ const BrandData = () => {
   };
 
   const createBrand = async () => {
+    if (!image) {
+      toast.error("Image not added");
+      return;
+    }
+
     setLoading(true);
     const formData = new FormData();
     formData.append("name", name);

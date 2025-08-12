@@ -13,11 +13,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, PencilIcon, PencilLine, Trash2, Upload } from "lucide-react";
+import { Loader2, PencilLine, Trash2, Upload } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { BrandsType } from "@/types/brandType";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import { BannerType } from "@/types/bannerType";
@@ -87,9 +86,9 @@ const UpdateBanner = ({ item, onupdate }: Props) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Brand data</DialogTitle>
+          <DialogTitle>Edit Banner data</DialogTitle>
           <DialogDescription>
-            Make changes to Brand data here. Click save when you&apos;re done.
+            Make changes to Banner data here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
 
@@ -116,13 +115,13 @@ const UpdateBanner = ({ item, onupdate }: Props) => {
             )}
 
             {previewImg && !image.url && (
-              <div className=" relative w-40 h-32 flex items-center justify-center border rounded-md">
+              <div className=" relative w-32 h-32 flex items-center justify-center border rounded-md overflow-hidden">
                 <Image
                   src={previewImg}
                   alt="Preview"
-                  width={80}
-                  height={80}
-                  className="w-full object-cover "
+                  width={50}
+                  height={50}
+                  className="w-full object-cover overflow-hidden"
                 />
                 <span
                   onClick={() => setPreviewImg(null)}
@@ -133,7 +132,7 @@ const UpdateBanner = ({ item, onupdate }: Props) => {
               </div>
             )}
             {image.url && (
-              <div className="relative w-40 h-32 flex items-center justify-center">
+              <div className="relative w-24 h-24 flex items-center justify-center">
                 <Image
                   src={image.url}
                   alt="brand-image"
@@ -143,16 +142,16 @@ const UpdateBanner = ({ item, onupdate }: Props) => {
                 />
                 <span
                   onClick={() => setImage({ url: "", public_id: "" })}
-                  className="absolute top-0 right-0 bg-red-500/70 w-8 h-8 flex items-center justify-center text-white text-xs px-1 rounded-full cursor-pointer hover:bg-red-500"
+                  className="absolute top-0 right-0 bg-red-500/70 w-6 h-6 flex items-center justify-center text-white text-xs px-1 rounded-full cursor-pointer hover:bg-red-500"
                 >
-                  <Trash2 size={18} />
+                  <Trash2 size={15} />
                 </span>
               </div>
             )}
           </div>
 
           <div className=" space-y-2">
-            <Label className="text-xs font-semibold">Brand Name</Label>
+            <Label className="text-xs font-semibold">Banner Title</Label>
             <Input
               type="text"
               className="focus-visible:ring-1"
@@ -162,7 +161,7 @@ const UpdateBanner = ({ item, onupdate }: Props) => {
             />
           </div>
           <div className=" space-y-2">
-            <Label className="text-xs font-semibold">Brand Description</Label>
+            <Label className="text-xs font-semibold">Banner subtitle</Label>
             <Textarea
               className="h-24 focus-visible:ring-1 resize-none"
               value={subtitle}

@@ -103,7 +103,7 @@ const UserData = () => {
         await fetchData();
       }
     } catch (error) {
-      console.log("Failed to delete user");
+      console.log("Failed to delete user:", error);
     } finally {
       setLoading(false);
     }

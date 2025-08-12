@@ -48,7 +48,7 @@ const formSchema = z.object({
 
 const SignUpForm = () => {
   const [loading, setLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  // const [imagePreview, setImagePreview] = useState<string | null>(null);
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,22 +61,22 @@ const SignUpForm = () => {
     },
   });
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      form.setValue("avatar", file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     form.setValue("avatar", file);
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setImagePreview(reader.result as string);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
 
-  const removeImage = () => {
-    form.setValue("avatar", null);
-    setImagePreview(null);
-  };
+  // const removeImage = () => {
+  //   form.setValue("avatar", null);
+  //   setImagePreview(null);
+  // };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
