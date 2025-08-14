@@ -12,8 +12,6 @@ import {
 
 const Currencies = () => {
   const [currency, setCurrency] = useState("USD");
-  console.log(currency);
-
   return (
     <Select
       onValueChange={(value) => {

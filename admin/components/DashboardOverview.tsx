@@ -3,13 +3,7 @@ import { serverUrl } from "@/config";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Layers2, ShoppingBag, Tag, User, Users } from "lucide-react";
 
 const DashboardOverview = () => {

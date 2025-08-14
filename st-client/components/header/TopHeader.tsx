@@ -5,7 +5,6 @@ import Container from "../Container";
 import Link from "next/link";
 import { FaXTwitter } from "react-icons/fa6";
 import Currencies from "../Currencies";
-import { ModeToggle } from "../ModeToggle";
 
 const socialMedia = [
   {

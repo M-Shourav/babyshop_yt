@@ -118,5 +118,13 @@
   }
   body {
     @apply bg-background text-foreground;
+
+    button {
+      @apply cursor-pointer;
+    }
+  }
+
+  .hover {
+    @apply hover:text-[#0ABEB3] duration-200;
   }
 }
