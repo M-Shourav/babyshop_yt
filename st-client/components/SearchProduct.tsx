@@ -70,11 +70,12 @@ const SearchProduct = () => {
             {filteredProducts.length > 0 ? (
               filteredProducts.map((item) => (
                 <CommandItem key={item._id}>
-                  <Search className=" h-4 w-4" />
                   <Link
                     href={`/products/${item.slug}`}
                     onClick={() => setSearchTerm("")}
+                    className="flex items-center gap-2"
                   >
+                    <Search className=" h-4 w-4 mt-1" />
                     {item.title}
                   </Link>
                 </CommandItem>

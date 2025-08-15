@@ -51,6 +51,7 @@ const SignInForm = () => {
       const data = res?.data;
       if (data?.success) {
         toast.success(data?.message);
+        window.location.href = "/";
       } else {
         toast.error(data?.message);
       }
